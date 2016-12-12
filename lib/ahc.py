@@ -1,10 +1,14 @@
 """ahc classes."""
 
 # 架構順序是這樣    銀行別 -> 系統別 -> IBM 產品別 -> LPAR
+# TODO 有什麼方法可以
 
 
-class AHCTemplate(object):
-    """docstring for AHCTemplate.
+from pathlib import Path
+input_dir = None
+
+class CustomerTemplate(object):
+    """docstring for CustomerTemplate.
 
     某家銀行的 template
 
@@ -14,11 +18,14 @@ class AHCTemplate(object):
     3. 輸出路徑
     """
 
-    def __init__(self, *systems):
+    def __init__(self,  *systems, input_directory='', output_directory=''):
         """某個產品下面有一堆 LPAR."""
         self.systems = []
         if systems:
             self.systems = [system for system in systems]
+        global input_dir
+        input_dir = Path(input_directory)
+        self.output_directory = Path(output_directory)
 
     def check_file_formation(self):
         """"確認檔案格式。確認一下跟上次拿到的檔案有沒有差別。應該是一堆壓縮檔."""
@@ -27,10 +34,17 @@ class AHCTemplate(object):
     def unzip_files(self):
         """解壓縮資料。這個可能有 rar 有 gz 有 tar.gz，也可能有 zip。總之先解壓縮到當前資料夾."""
         raise NotImplementedError
-
-    def processor(self):
-        """應該會是很複雜的一塊."""
-        raise NotImplementedError
+        # p = Path(self.input_directory)
+        # for file in p.rglob('*.gz'):
+        #     print(file.name)
+        #     tar = tarfile.open(str(file))
+        #     for member in tar.getmembers():
+        #         print(member)
+        #         member.name = member.name.replace('/tmp/ahc/','')
+        #         tar.extract(member, str(file.parent))
+        #         print(file.parent)
+        #     tar.close()
+        #     file.unlink()        
 
     def display_all(self):
         """隨便寫個功能看看."""
@@ -41,8 +55,8 @@ class AHCTemplate(object):
         """Run all functions."""
         # self.check_file_formation(self)
         # self.unzip_files(self)
-        # self.processor(self)
         for system in self.systems:
+            print(system)
             system.process()
 
 
@@ -81,11 +95,14 @@ class IBM_ProductTemplate(object):
 class DB2_Product(IBM_ProductTemplate):
     """docstring for DB2"""
     def create_db2diag(self):
+        """TODO 1. 處理 db2diag.log , 然後移動到對應資料夾"""
         raise NotImplementedError
 
     def process(self):
+        """TODO 2. 把符合 hostname 的，移動到對應資料夾."""
         for lpar in self.all_lpars:
             print("處理 DB2")
+            print(input_dir)            
             print("處理 LPAR: {}".format(lpar))
 
 class WAS_Product(IBM_ProductTemplate):
@@ -102,9 +119,13 @@ class WAS_Product(IBM_ProductTemplate):
 
 class SystemTemplate(object):
     """docstring for SystemTemplate"""
-    def __init__(self):
+    def __init__(self, name):
         """某個系統之下有一堆 IBM 產品."""
         self.all_products = []
+        self._name = name
+
+    def __repr__(self):
+        return self._name
 
     def add_product(self, *products):
         """接收多個 product 位置引數, 加入到 all_products list 中."""
@@ -140,9 +161,9 @@ class SystemTemplate(object):
 # #     print(prod.process())
 
 # eai.process()
-payment = SystemTemplate()
+# payment = SystemTemplate()
 
-payment.add_product(DB2_Product('cpdb1', 'cpdb2'))
-payment.add_product(WAS_Product('cpap1', 'cpap2', 'cpap3'))
-CHB = AHCTemplate(payment)
-CHB.run()
+# payment.add_product(DB2_Product('cpdb1', 'cpdb2'))
+# payment.add_product(WAS_Product('cpap1', 'cpap2', 'cpap3'))
+# CHB = CustomerTemplate(payment)
+# CHB.run()

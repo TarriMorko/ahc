@@ -1,7 +1,8 @@
 """Main Function."""
 
-# from lib import ahc
-
+from lib.ahc import SystemTemplate
+from lib.ahc import DB2_Product
+from lib.ahc import CustomerTemplate
 print("Hello")
 
 
@@ -16,10 +17,26 @@ print("Hello")
 
 # 第一部應該是確認檔案
 
-account = {"LandBank": [{"etabs_north": ["db2", "ihs", "was", "wmq"]},
-                        {"etabs_south": ["db2", "ihs", "was", "wmq"]}
-                        ],
-           "CHB": ["eai", "netbank", "payment"]
-           }
+# account = {"LandBank": [{"etabs_north": ["db2", "ihs", "was", "wmq"]},
+#                         {"etabs_south": ["db2", "ihs", "was", "wmq"]}
+#                         ],
+#            "CHB": ["eai", "netbank", "payment"]
+#            }
 
 # for file in src.rglob('*.zip'):  # 靠 土銀的是 zip
+
+netbank = SystemTemplate('netbank')
+netbank.add_product(DB2_Product('cpdb1', 'cpdb2'))
+
+eai = SystemTemplate('eai')
+eai.add_product(DB2_Product('cpdb1', 'cpdb2'))
+
+payment = SystemTemplate('payment')
+payment.add_product(DB2_Product('cpdb1', 'cpdb2'))
+
+
+
+CHB = CustomerTemplate(netbank, payment, eai, 
+                       input_directory='D:\IBM\CHB - 原本的',
+                       output_directory='C:\src\ahc_html')
+CHB.run()
