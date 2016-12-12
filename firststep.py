@@ -71,5 +71,98 @@ class Etabs_North(BaseSystem):
     def __init__(self):
         self.all_product = [ WASClass() ]
 
-class LandBank():
-    """"""
+# class LandBank():
+#     """"""
+
+
+# 好啦，一個 account 應該長的向這樣
+account = {"LandBank": [{"etabs_north": ["db2", "ihs", "was", "wmq"]},
+                        {"etabs_south": ["db2", "ihs", "was", "wmq"]}
+                        ],
+           "CHB": ["eai", "netbank", "payment"]
+           }
+
+# "db2" 下面還要分 Lpar，我先從下往上寫好了...
+
+class IBM_ProductTemplate(object):
+    def __init__(self, *hostnames):
+        """某個產品下面有一堆 LPAR."""
+        self.all_lpars = []
+        if hostnames:
+            self.all_lpars = [lpar for lpar in hostnames]
+
+    def add_lpar(self, *hostnames):
+        """接收多個 hostname 位置引數, 加入到 all_lpars list 中."""
+        for hostname in hostnames:
+             self.all_lpars.append(hostname)
+
+    def display_all(self):
+        """隨便寫個功能看看."""
+        for lpar in self.all_lpars:
+            print(lpar)
+
+    def process(self):
+        """產品需要一個執行者函式，處理所有的事"""
+        pass
+
+
+class DB2_Product(IBM_ProductTemplate):
+    """docstring for DB2"""
+    def create_db2diag(self):
+        raise NotImplementedError
+
+    def process(self):
+        for lpar in self.all_lpars:
+            print("處理 DB2")
+            print("處理 LPAR: {}".format(lpar))
+
+class WAS_Product(IBM_ProductTemplate):
+    """docstring for DB2"""
+    def create_gclog(self):
+        raise NotImplementedError
+
+    def process(self):
+        for lpar in self.all_lpars:
+            print("處理 WAS")
+            print("處理 LPAR: {}".format(lpar))
+
+
+DB2 = DB2_Product()
+DB2.add_lpar('A1', 'A2')
+DB2.display_all()
+WAS = WAS_Product()
+WAS.add_lpar('A1', 'A2')
+
+# DB2.create_db2diag()
+
+# 好啦，我的產品可以加入 LPAR 了。接下是 System別
+
+class SystemTemplate(object):
+    """docstring for SystemTemplate"""
+    def __init__(self):
+        """某個系統之下有一堆 IBM 產品."""
+        self.all_products = []
+
+    def add_product(self, *products):
+        """接收多個 product 位置引數, 加入到 all_products list 中."""
+        for product in products:
+             self.all_products.append(product)
+
+    def process(self):
+        for product in self.all_products:
+            product.process()
+
+
+etabs = SystemTemplate()
+etabs.add_product(DB2)
+etabs.add_product(WAS)
+# for prod in etabs.all_products:
+#     print(prod.process())
+etabs.process()
+eai = SystemTemplate()
+
+eai.add_product(DB2_Product('B1', 'B2'))
+# for prod in eai.all_products:
+#     print(prod.process())
+
+eai.process()
