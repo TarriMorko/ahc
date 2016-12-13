@@ -6,6 +6,8 @@
 
 from pathlib import Path
 input_dir = None
+output_dir = None
+
 
 class CustomerTemplate(object):
     """docstring for CustomerTemplate.
@@ -17,7 +19,6 @@ class CustomerTemplate(object):
     2. 原本有什麼檔案
     3. 輸出路徑
     """
-
     def __init__(self,  *systems, input_directory='', output_directory=''):
         """某個產品下面有一堆 LPAR."""
         self.systems = []
@@ -25,7 +26,8 @@ class CustomerTemplate(object):
             self.systems = [system for system in systems]
         global input_dir
         input_dir = Path(input_directory)
-        self.output_directory = Path(output_directory)
+        global output_dir
+        output_dir = Path(output_directory)
 
     def check_file_formation(self):
         """"確認檔案格式。確認一下跟上次拿到的檔案有沒有差別。應該是一堆壓縮檔."""
@@ -44,7 +46,7 @@ class CustomerTemplate(object):
         #         tar.extract(member, str(file.parent))
         #         print(file.parent)
         #     tar.close()
-        #     file.unlink()        
+        #     file.unlink()
 
     def display_all(self):
         """隨便寫個功能看看."""
@@ -88,7 +90,7 @@ class IBM_ProductTemplate(object):
             print(lpar)
 
     def process(self):
-        """產品需要一個執行者函式，處理所有的事"""
+        """產品需要一個執行者函式，處理所有的事."""
         pass
 
 
@@ -102,7 +104,7 @@ class DB2_Product(IBM_ProductTemplate):
         """TODO 2. 把符合 hostname 的，移動到對應資料夾."""
         for lpar in self.all_lpars:
             print("處理 DB2")
-            print(input_dir)            
+            print(input_dir)
             print("處理 LPAR: {}".format(lpar))
 
 class WAS_Product(IBM_ProductTemplate):
@@ -115,6 +117,14 @@ class WAS_Product(IBM_ProductTemplate):
             print("處理 WAS")
             print("處理 LPAR: {}".format(lpar))
 
+    # C:\src\ahc_html\netbank\was\ibportal1\source\CHB1
+    # 糟糕 我需要好多訊息
+    # 我需要 output_dir  C:\src\ahc_html
+    # 我需要系統         netbank
+    # 我需要產品別       was
+    # 我需易 hostname    ibportal1
+    #                    source
+    # 我需要 AP servername  CHB1
 
 
 class SystemTemplate(object):
