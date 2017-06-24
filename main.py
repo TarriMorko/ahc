@@ -35,8 +35,7 @@ payment = SystemTemplate('payment')
 payment.add_product(DB2_Product('cpdb1', 'cpdb2'))
 
 
-
-CHB = CustomerTemplate(netbank, payment, eai, 
-                       input_directory='D:\IBM\CHB - 原本的',
-                       output_directory='C:\src\ahc_html')
+CHB = CustomerTemplate(netbank, payment, eai,
+                       input_directory='C:\\temp\\CHB',
+                       output_directory='C:\\src\\ahc_html')
 CHB.run()
